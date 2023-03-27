@@ -1,4 +1,8 @@
-const express = require('express')
+require('dotenv').config()
+const stripe = require('stripe')(process.env.STRIPE_SK);
+const express = require('express');
+const path = require('path');
+
 const app = express()
 app.all('/', (req, res) => {
     console.log("Just got a request!")
