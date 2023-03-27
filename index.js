@@ -5,10 +5,6 @@ const path = require('path');
 const app = express()
 currency = process.env.CURRENCY || 'sgd';
 
-app.all('/', (req, res) => {
-    console.log("Just got a request!")
-    res.send('Yo!')
-})
 app.listen(process.env.PORT || 3000)
 
 app.use('/assets', express.static('assets'));
