@@ -21,7 +21,7 @@ app.post('/connection_token', async function (req, res) {
 
 app.get('/', function (req, res) {
   console.log("ROOT HELLO WORLD");
-  res.json({ sample: "hello world", currency: currency });
+  res.json({ sample: "helloo world", currency: currency });
 });
 
 app.get('/locations', async function (req, res) {
