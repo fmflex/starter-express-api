@@ -1,0 +1,22 @@
+<script src="/js/orders.js"></script>
+<ol style="--length: 5" role="list">
+{{#each odr}}
+  {{#if completed}} 
+  <li style="--i: 5">
+  {{else}}
+  <li style="--i: 2" value={{payment_intent_id}} onclick="myFunction(this)">
+  {{/if}}
+    <div>
+      <div class="right">  
+      {{#each order}}
+      <p>{{name}} - quantity: {{quantity}}</p>
+      {{/each}}
+      </div>
+      <div>
+            <h3>{{name}}</h3>
+            <br>
+      </div>
+    </div>
+	</li>
+{{/each}}
+</ol>

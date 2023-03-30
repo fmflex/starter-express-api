@@ -1,13 +1,22 @@
 const stripe = require('stripe')(process.env.STRIPE_SK);
 const express = require('express');
 const path = require('path');
+//Loads the handlebars module
+const exphbs = require('express-handlebars');
 
 const app = express()
 currency = process.env.CURRENCY || 'sgd';
 
 app.listen(process.env.PORT || 3000)
 
-app.use('/assets', express.static('assets'));
+app.engine('hbs', exphbs.engine({
+  defaultLayout: 'main',
+  extname: '.hbs'
+}));
+app.set('view engine', 'hbs');
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json({}));
 
 app.post('/connection_token', async function (req, res) {
   try {
@@ -85,6 +94,84 @@ app.post('/capture_payment_intent_ttpa', async function (req, res) {
   try {
     const pi = await stripe.paymentIntents.capture(req.query.payment_intent_id);
     console.log(pi);
+    res.json(pi);
+  } catch (error) {
+    console.error(error);
+    res.json("error");
+  }
+});
+
+var productList = [
+  { name: "vanilla", price: 10, awesomeness: 3 },
+  { name: "chocolate", price: 4, awesomeness: 8 },
+  { name: "banana", price: 1, awesomeness: 1 },
+  { name: "greentea", price: 5, awesomeness: 7 },
+  { name: "jawbreakers", price: 6, awesomeness: 2 },
+  { name: "vanilla", price: 10, awesomeness: 3 },
+  { name: "vanilla", price: 10, awesomeness: 3 },
+  { name: "chocolate", price: 4, awesomeness: 8 },
+  { name: "banana", price: 1, awesomeness: 1 },
+  { name: "greentea", price: 5, awesomeness: 7 },
+  { name: "jawbreakers", price: 6, awesomeness: 2 },
+  { name: "vanilla", price: 10, awesomeness: 3 },
+  { name: "chocolate", price: 4, awesomeness: 8 },
+  { name: "banana", price: 1, awesomeness: 1 },
+  { name: "greentea", price: 5, awesomeness: 7 },
+  { name: "jawbreakers", price: 6, awesomeness: 2 },
+  { name: "vanilla", price: 10, awesomeness: 3 },
+  { name: "chocolate", price: 4, awesomeness: 8 },
+  { name: "banana", price: 1, awesomeness: 1 },
+  { name: "greentea", price: 5, awesomeness: 7 },
+  { name: "jawbreakers", price: 6, awesomeness: 2 },
+  { name: "vanilla", price: 10, awesomeness: 3 },
+  { name: "chocolate", price: 4, awesomeness: 8 },
+  { name: "banana", price: 1, awesomeness: 1 },
+  { name: "greentea", price: 5, awesomeness: 7 },
+  { name: "jawbreakers", price: 6, awesomeness: 2 },
+  { name: "vanilla", price: 10, awesomeness: 3 }
+  
+];
+
+app.get("/orders", async function(req, res) {
+
+  const paymentIntents = await stripe.paymentIntents.list({limit:30,})
+  const successfulPaymentIntents = paymentIntents.data.filter( pi => pi.status === "succeeded" && pi.metadata !== undefined && pi.metadata.completed !== undefined);
+  console.log(successfulPaymentIntents.length);
+  const orders = [];
+  successfulPaymentIntents.forEach( paymentIntent =>
+    {
+   // console.log(paymentIntent.metadata);
+    paymentIntent.metadata.completed = paymentIntent.metadata.completed === 'true';
+    paymentIntent.metadata.payment_intent_id = paymentIntent.id
+    const currentOrder = paymentIntent.metadata.order.split(',')
+    const newItems = [];
+    currentOrder.forEach( item => 
+      {
+        const currentItem= item.split('=');
+        newItems.push({
+          name: productList[currentItem[0].trim()].name,
+          quantity: currentItem[1].trim()
+        });
+
+      })
+      paymentIntent.metadata.order = newItems;
+      orders.push(paymentIntent.metadata);
+    }
+  )
+  orders.forEach(order =>
+    {
+      console.log(order.order);
+    })
+  res.render("orders", { odr: orders });
+});
+
+app.post('/complete_order', async function (req, res) {
+  console.log("complete_order");
+  try {
+    const pi = await stripe.paymentIntents.update(
+      req.query.payment_intent_id,
+      {metadata: {completed: 'true'}}
+    );
     res.json(pi);
   } catch (error) {
     console.error(error);
