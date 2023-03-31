@@ -1,4 +1,5 @@
 const stripe = require('stripe')(process.env.STRIPE_SK);
+
 const express = require('express');
 const path = require('path');
 //Loads the handlebars module
@@ -102,34 +103,14 @@ app.post('/capture_payment_intent_ttpa', async function (req, res) {
 });
 
 var productList = [
-  { name: "vanilla", price: 10, awesomeness: 3 },
-  { name: "chocolate", price: 4, awesomeness: 8 },
-  { name: "banana", price: 1, awesomeness: 1 },
-  { name: "greentea", price: 5, awesomeness: 7 },
-  { name: "jawbreakers", price: 6, awesomeness: 2 },
-  { name: "vanilla", price: 10, awesomeness: 3 },
-  { name: "vanilla", price: 10, awesomeness: 3 },
-  { name: "chocolate", price: 4, awesomeness: 8 },
-  { name: "banana", price: 1, awesomeness: 1 },
-  { name: "greentea", price: 5, awesomeness: 7 },
-  { name: "jawbreakers", price: 6, awesomeness: 2 },
-  { name: "vanilla", price: 10, awesomeness: 3 },
-  { name: "chocolate", price: 4, awesomeness: 8 },
-  { name: "banana", price: 1, awesomeness: 1 },
-  { name: "greentea", price: 5, awesomeness: 7 },
-  { name: "jawbreakers", price: 6, awesomeness: 2 },
-  { name: "vanilla", price: 10, awesomeness: 3 },
-  { name: "chocolate", price: 4, awesomeness: 8 },
-  { name: "banana", price: 1, awesomeness: 1 },
-  { name: "greentea", price: 5, awesomeness: 7 },
-  { name: "jawbreakers", price: 6, awesomeness: 2 },
-  { name: "vanilla", price: 10, awesomeness: 3 },
-  { name: "chocolate", price: 4, awesomeness: 8 },
-  { name: "banana", price: 1, awesomeness: 1 },
-  { name: "greentea", price: 5, awesomeness: 7 },
-  { name: "jawbreakers", price: 6, awesomeness: 2 },
-  { name: "vanilla", price: 10, awesomeness: 3 }
-  
+  { name: "Apple and orange juice"},
+  { name: "Coconut juice with shredded pulp"},
+  { name: "Pink grapefruit juice"},
+  { name: "White cold brew"},
+  { name: "Uji matcha latte"},
+  { name: "Lychee oolong tea"},
+  { name: "Honey green tea"},
+  { name: "Classic milk tea"},  
 ];
 
 app.get("/orders", async function(req, res) {
@@ -148,10 +129,12 @@ app.get("/orders", async function(req, res) {
     currentOrder.forEach( item => 
       {
         const currentItem= item.split('=');
-        newItems.push({
-          name: productList[currentItem[0].trim()].name,
-          quantity: currentItem[1].trim()
-        });
+        if(productList.length >currentItem[0].trim() ){
+          newItems.push({
+            name: productList[currentItem[0].trim()].name,
+            quantity: currentItem[1].trim()
+          });
+        }
 
       })
       paymentIntent.metadata.order = newItems;
