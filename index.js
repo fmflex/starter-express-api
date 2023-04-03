@@ -1,4 +1,4 @@
-//const stripe = require('stripe')(process.env.STRIPE_SK);
+const stripe = require('stripe')(process.env.STRIPE_SK);
 const express = require('express');
 const path = require('path');
 //Loads the handlebars module
