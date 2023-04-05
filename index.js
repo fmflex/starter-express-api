@@ -1,4 +1,5 @@
 const stripe = require('stripe')(process.env.STRIPE_SK);
+
 const express = require('express');
 const path = require('path');
 //Loads the handlebars module
@@ -112,11 +113,11 @@ var productList = [
   { name: "Classic milk tea"},  
 ];
 
-app.get("/orders", async function(req, res) {
-
+async function paymentIntentList()
+{
   const paymentIntents = await stripe.paymentIntents.list({limit:30,})
   const successfulPaymentIntents = paymentIntents.data.filter( pi => pi.status === "succeeded" && pi.metadata !== undefined && pi.metadata.completed !== undefined);
-  console.log(successfulPaymentIntents.length);
+  //console.log(successfulPaymentIntents.length);
   const orders = [];
   successfulPaymentIntents.forEach( paymentIntent =>
     {
@@ -142,8 +143,20 @@ app.get("/orders", async function(req, res) {
   )
   orders.forEach(order =>
     {
-      console.log(order.order);
+      //console.log(order.order);
     })
+
+    return orders;
+}
+
+app.get('/payment_intents', async function (req, res) {
+  const orders = await (await paymentIntentList()).filter(order => order.completed == false);
+  res.json(orders);
+});
+
+app.get("/orders", async function(req, res) {
+  const orders = await paymentIntentList();
+  console.log(orders);
   res.render("orders", { odr: orders });
 });
 

@@ -3,7 +3,7 @@
   <ol style="--length: 5" role="list" id="prep" aria-label="Preparation">
   {{#each odr}}
     {{#unless completed}} 
-    <li style="--i: 2" value={{payment_intent_id}} onclick="myFunction(this)">
+    <li style="--i: 2" value={{payment_intent_id}} onclick="completeOrder(this)">
       <div>
         <div class="right">  
         {{#each order}}
