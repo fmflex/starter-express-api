@@ -22,9 +22,15 @@ async function completeOrder(identifier) {
   {
     var li = $("<li></li>");
     const piID = lineInfo.payment_intent_id
-    li.prop("style", "--i: 2")
-    li.attr("value", piID);
-    li.attr("onclick", "completeOrder(this)");
+    if(!lineInfo.completed)
+    {
+      li.prop("style", "--i: 2")
+      li.attr("value", piID);
+      li.attr("onclick", "completeOrder(this)");
+    } else
+    {
+      li.prop("style", "--i: 5")
+    }
     var div = $("<div></div>");
 
     var divr = $(`<div class="right"></div>`);
@@ -54,5 +60,13 @@ async function completeOrder(identifier) {
         list.append(newLI(line));
       }
     });
-  console.log(list);
+
+    const ready = $("#ready");
+    ready.empty();
+    jsonResponse.forEach(line => {
+      if(line.completed)
+      {
+        ready.append(newLI(line));
+      }
+    });
     }

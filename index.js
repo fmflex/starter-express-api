@@ -1,5 +1,4 @@
 const stripe = require('stripe')(process.env.STRIPE_SK);
-
 const express = require('express');
 const path = require('path');
 //Loads the handlebars module
@@ -150,7 +149,7 @@ async function paymentIntentList()
 }
 
 app.get('/payment_intents', async function (req, res) {
-  const orders = await (await paymentIntentList()).filter(order => order.completed == false);
+  const orders = await paymentIntentList();
   res.json(orders);
 });
 
