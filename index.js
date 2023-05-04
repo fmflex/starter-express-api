@@ -116,7 +116,7 @@ app.get('/create_payment_intent_paynow', async function (req, res) {
       confirm:true
     });
    // console.log({ client_secret: pi.client_secret, status: pi.status, id: pi.id, amount: pi.amount, currency: pi.currency, metadata: pi.metadata });
-    res.json({ image_url_png: pi.next_action.image_url_png, data: pi.next_action.data});
+    res.json({ image_url_png: pi.next_action.paynow_display_qr_code.image_url_png, data: pi.next_action.paynow_display_qr_code.data});
   } catch (error) {
     console.error(error);
     res.json("error");
