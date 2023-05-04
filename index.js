@@ -101,6 +101,27 @@ app.post('/capture_payment_intent_ttpa', async function (req, res) {
   }
 });
 
+app.get('/create_payment_intent_paynow', async function (req, res) {
+  console.log("create_payment_intent_paynow");
+  console.log(req);
+  try {
+    const pm = await stripe.paymentMethods.create({
+      type: 'paynow',
+    });
+    const pi = await stripe.paymentIntents.create({
+      amount: req.query.amount,
+      currency: 'sgd',
+      payment_method: pm.id,
+      payment_method_types: ['paynow'],
+      confirm:true
+    });
+   // console.log({ client_secret: pi.client_secret, status: pi.status, id: pi.id, amount: pi.amount, currency: pi.currency, metadata: pi.metadata });
+    res.json({ next_action: pi.next_action});
+  } catch (error) {
+    console.error(error);
+    res.json("error");
+  }
+});
 var productList = [
   { name: "Apple and orange juice"},
   { name: "Coconut juice with shredded pulp"},
