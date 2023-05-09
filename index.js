@@ -148,7 +148,7 @@ var productList = [
   { name: "Honey green tea"},
   { name: "Classic milk tea"},  
 ];
-/*
+*/
 var productList = [
   { name: "Latte"},
   { name: "Cappuccino"},
