@@ -105,13 +105,13 @@ app.get('/create_payment_intent', async function (req, res) {
   console.log("create_payment_intent");
   try {
     const pm = await stripe.paymentMethods.create({
-      type: 'req.query.type',
+      type: req.query.type,
     });
     const pi = await stripe.paymentIntents.create({
       amount: req.query.amount,
       currency: 'sgd',
       payment_method: pm.id,
-      payment_method_types: ['paynow'],
+      payment_method_types: [req.query.type],
       payment_method_options: {
         wechat_pay: {
           client: "web"
