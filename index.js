@@ -48,7 +48,7 @@ app.get('/currency', async function (req, res) {
   res.json({ currency });
 });
 
-app.post('/create_payment_intent', async function (req, res) {
+app.post('/create_payment_intent_old', async function (req, res) {
   console.log("create_payment_intent");
   try {
     let additional_params = {};
@@ -101,27 +101,43 @@ app.post('/capture_payment_intent_ttpa', async function (req, res) {
   }
 });
 
-app.get('/create_payment_intent_paynow', async function (req, res) {
-  console.log("create_payment_intent_paynow");
-  console.log(req);
+app.get('/create_payment_intent', async function (req, res) {
+  console.log("create_payment_intent");
   try {
     const pm = await stripe.paymentMethods.create({
-      type: 'paynow',
+      type: 'req.query.type',
     });
     const pi = await stripe.paymentIntents.create({
       amount: req.query.amount,
       currency: 'sgd',
       payment_method: pm.id,
       payment_method_types: ['paynow'],
+      payment_method_options: {
+        wechat_pay: {
+          client: "web"
+        },
+      },
+      return_url: "https://wwww.google.com",
       confirm:true
     });
    // console.log({ client_secret: pi.client_secret, status: pi.status, id: pi.id, amount: pi.amount, currency: pi.currency, metadata: pi.metadata });
-    res.json({client_secret: pi.client_secret, image_url_png: pi.next_action.paynow_display_qr_code.image_url_png, data: pi.next_action.paynow_display_qr_code.data});
+   const next_action = pi.next_action
+   if(next_action.paynow_display_qr_code){
+   res.json({ image_url_png: next_action.paynow_display_qr_code.image_url_png,data: next_action.paynow_display_qr_code.data});
+   res.json({ image_url_png: next_action.paynow_display_qr_code.image_url_png,data: next_action.paynow_display_qr_code.data});
+   }
+   if(next_action.alipay_handle_redirect){
+    res.json({ data: next_action.alipay_handle_redirect.url});
+   }
+   if(next_action.wechat_pay_display_qr_code){
+    res.json({ image_url_png: next_action.wechat_pay_display_qr_code.image_url_png,data: next_action.wechat_pay_display_qr_code.data});
+   }
   } catch (error) {
     console.error(error);
     res.json("error");
   }
 });
+/*
 var productList = [
   { name: "Apple and orange juice"},
   { name: "Coconut juice with shredded pulp"},
@@ -131,6 +147,31 @@ var productList = [
   { name: "Lychee oolong tea"},
   { name: "Honey green tea"},
   { name: "Classic milk tea"},  
+];
+/*
+var productList = [
+  { name: "Latte"},
+  { name: "Cappuccino"},
+  { name: "Espresso"},
+  { name: "Americano"},
+  { name: "Decaf Latte"},
+  { name: "Decaf Cappuccino"},
+  { name: "Decaf Espresso"},
+  { name: "Decaf Americano"},
+  { name: "Kopi"},
+  { name: "Earl Grey Tea"},
+  { name: "Jasmine Green Tea"},
+  { name: "Pure Green Tea"},
+  { name: "Japanese Green Tea"},
+  { name: "Darjeeling Tea"},
+  { name: "English Breakfast Tea"},
+  { name: "Peppermint Leaves Tea"},
+  { name: "Chamomile Tea"},
+  { name: "Sparkling Water"},
+  { name: "Coke"},
+  { name: "Coke Zero"},
+  { name: "Cold Green Tea"},
+  { name: "Other"},
 ];
 
 async function paymentIntentList()
