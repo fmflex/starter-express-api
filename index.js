@@ -123,14 +123,14 @@ app.get('/create_payment_intent', async function (req, res) {
    // console.log({ client_secret: pi.client_secret, status: pi.status, id: pi.id, amount: pi.amount, currency: pi.currency, metadata: pi.metadata });
    const next_action = pi.next_action
    if(next_action.paynow_display_qr_code){
-   res.json({ image_url_png: next_action.paynow_display_qr_code.image_url_png,data: next_action.paynow_display_qr_code.data});
-   res.json({ image_url_png: next_action.paynow_display_qr_code.image_url_png,data: next_action.paynow_display_qr_code.data});
+   res.json({ image_url_png: next_action.paynow_display_qr_code.image_url_png,data: next_action.paynow_display_qr_code.data, client_secret: pi.client_secret});
+   //res.json({ image_url_png: next_action.paynow_display_qr_code.image_url_png,data: next_action.paynow_display_qr_code.data});
    }
    if(next_action.alipay_handle_redirect){
-    res.json({ data: next_action.alipay_handle_redirect.url});
+    res.json({ data: next_action.alipay_handle_redirect.url, client_secret: pi.client_secret});
    }
    if(next_action.wechat_pay_display_qr_code){
-    res.json({ image_url_png: next_action.wechat_pay_display_qr_code.image_url_png,data: next_action.wechat_pay_display_qr_code.data});
+    res.json({ image_url_png: next_action.wechat_pay_display_qr_code.image_url_png,data: next_action.wechat_pay_display_qr_code.data, client_secret: pi.client_secret});
    }
   } catch (error) {
     console.error(error);
